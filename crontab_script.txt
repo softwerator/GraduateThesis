@@ -1,0 +1,4 @@
+* * * * * /usr/bin/python /home/burakcan/GraduateThesis/append_data.py
+* * * * * /usr/bin/python /home/burakcan/GraduateThesis/monthly_data_with_spark.py
+0 * * * * /usr/bin/python /home/burakcan/GraduateThesis/machine_learning_with_spark.py
+* * * * * /usr/bin/python /home/burakcan/GraduateThesis/real_time_prediction.py

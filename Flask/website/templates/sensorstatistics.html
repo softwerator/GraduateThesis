@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container-fluid col-md-12 col-lg-10 col-xl-12">
+    <h3>
+        {% if session['lang'] == "tr" %}Sensör İstatistikleri
+        {% else %}Sensor Statistics{% endif %}
+    </h3>
+    <hr>
+
+    <style>
+        div.widget {
+            padding: 10px 10px 1px 10px;
+        }
+
+        i.fa {
+            float: right;
+            margin-top: 5px;
+        }
+    </style>
+
+    <div id="results" class="container">
+        <p id="countdown" style="text-align:right"></p>
+        <div class="row">
+            <div class="col-md-6" style="margin-bottom: 20px; margin-top: 20px;">
+                <div class="widget widget-stats bg-success rounded">
+                    <div class="stats-icon"><i class="fa fa-pie-chart"></i></div>
+                    <div class="stats-info">
+                        <h4>
+                            {% if session['lang'] == "tr" %}Son 1 Saatlik
+                            {% else %}Last 1 Hour{% endif %}
+                        </h4>
+                        <hr>
+                        <p id="hourly">{% if session['lang'] == "tr" %}Veriler yükleniyor...
+                            {% else %}Datas are loading...{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" style="margin-bottom: 20px; margin-top: 20px;">
+                <div class="widget widget-stats bg-info rounded">
+                    <div class="stats-icon"><i class="fa fa-area-chart"></i></div>
+                    <div class="stats-info">
+                        <h4>
+                            {% if session['lang'] == "tr" %}Son 24 Saatlik
+                            {% else %}Last 24 Hours{% endif %}
+                        </h4>
+                        <hr>
+                        <p id="daily">{% if session['lang'] == "tr" %}Veriler yükleniyor...
+                            {% else %}Datas are loading...{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" style="margin-bottom: 20px; margin-top: 20px;">
+                <div class="widget widget-stats bg-danger rounded">
+                    <div class="stats-icon"><i class="fa fa-bar-chart"></i></div>
+                    <div class="stats-info">
+                        <h4>
+                            {% if session['lang'] == "tr" %}Son 7 Günlük
+                            {% else %}Last 7 Days{% endif %}
+                        </h4>
+                        <hr>
+                        <p id="weekly">{% if session['lang'] == "tr" %}Veriler yükleniyor...
+                            {% else %}Datas are loading...{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" style="margin-bottom: 20px; margin-top: 20px;">
+                <div class="widget widget-stats bg-warning rounded">
+                    <div class="stats-icon"><i class="fa fa-line-chart"></i></div>
+                    <div class="stats-info">
+                        <h4>
+                            {% if session['lang'] == "tr" %}Son 30 Günlük
+                            {% else %}Last 30 Days{% endif %}
+                        </h4>
+                        <hr>
+                        <p id="monthly">{% if session['lang'] == "tr" %}Veriler yükleniyor...
+                            {% else %}Datas are loading...{% endif %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            countdown = 60;
+            handled = false;
+            function getDatas() {
+                $.get("/api/v1/get_special_values", function (response, status) {
+                    console.log(response.data);
+                    $("#monthly, #daily, #weekly, #hourly").fadeOut(500).fadeIn(500);
+                    setTimeout(function () {
+                        for (i = 0; i < response.data.length; i++) {
+                            if (document.documentElement.lang == "tr") {
+                                $("p#" + response.data[i].type).html(
+                                    'Ölçülen ' + response.data[i].count + ' veriye göre değerler;<br><br>' +
+                                    'Ortalama: ' + response.data[i].avg.toFixed(5) + '&#8451<br>' +
+                                    'En yüksek: ' + response.data[i].highest.toFixed(5) + '&#8451<br>' +
+                                    'En düşük: ' + response.data[i].lowest.toFixed(5) + '&#8451');
+                            } else {
+                                if (response.data[i].count > 1)
+                                    text_of_data = ' datas;<br><br>'
+                                else
+                                    text_of_data = ' data;<br><br>'
+                                $("p#" + response.data[i].type).html(
+                                    'The values according to measured ' + response.data[i].count + text_of_data +
+                                    'Average: ' + response.data[i].avg.toFixed(5) + '&#8451<br>' +
+                                    'Highest: ' + response.data[i].highest.toFixed(5) + '&#8451<br>' +
+                                    'Lowest: ' + response.data[i].lowest.toFixed(5) + '&#8451');
+                            }
+                        }
+                        requestCountdown();
+                        if (handled == false) { document.getElementById("countdown").style.paddingTop = "10px"; handled = true; }
+                    }, 500);
+                });
+            }
+            function requestCountdown() {
+                if (countdown == 0) countdown = 60;
+                countdown--;
+                if (countdown < 1) document.getElementById("countdown").style.display = "none";
+                else document.getElementById("countdown").style.display = "block";
+                if (document.documentElement.lang == "tr") $("p#countdown").html('Veriler ' + countdown + ' saniye sonra güncellenecektir.');
+                else {
+                    if (countdown == 1) $("p#countdown").html('Datas will be updated ' + countdown + ' second later.');
+                    else $("p#countdown").html('Datas will be updated ' + countdown + ' seconds later.');
+                }
+            }
+            getDatas();
+            setInterval(function () {
+                getDatas();
+            }, 60000);
+            setInterval(function () {
+                if (countdown != 0 && countdown != 60) requestCountdown();
+            }, 1000);
+        });
+    </script>
+</div>
+{% endblock %}

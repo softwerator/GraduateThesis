@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<style>
+    div#last-results>div,
+    div#quick-menu>div {
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    div.widget {
+        padding: 10px 10px 1px 10px;
+    }
+
+    i.fa {
+        float: right;
+        margin-top: 5px;
+    }
+</style>
+<div class="container col-md-10 col-xl-12">
+    <h3>{% if session['lang'] == "tr" %}Ana Sayfa
+        {% else %}Home Page{% endif %}</h3>
+    <hr>
+    <div id="last-results" class="container row" style="{% if stats == '' %} visibility: hidden;{% endif %}">
+        <div id="last-login" class="{% if stats.last_comment == '' %}col-md-6 col-sm-12{% else %}col-lg-4 col-md-12{% endif %}"
+            style="{% if stats.last_login == None %}display: none{% endif %}">
+            <div class="widget widget-stats bg-secondary rounded">
+                <div class="stats-icon"><i class="fa fa-sign-in"></i></div>
+                <div class="stats-info">
+                    <h4>{% if session['lang'] == "tr" %}Son Giriş
+                        {% else %}Last Login{% endif %}</h4>
+                    <hr>
+                    <p>{{stats.last_login}}</p>
+                </div>
+            </div>
+        </div>
+        <div id="last-logout" class="{% if stats.last_comment == '' %}col-md-6 col-sm-12{% else %}col-lg-4 col-md-12{% endif %}"
+            style="{% if stats.last_logout == None %}display: none{% endif %}">
+            <div class="widget widget-stats bg-secondary rounded">
+                <div class="stats-icon"><i class="fa fa-sign-out"></i></div>
+                <div class="stats-info">
+                    <h4>{% if session['lang'] == "tr" %}Son Çıkış
+                        {% else %}Last Logout{% endif %}</h4>
+                    <hr>
+                    <p>{{stats.last_logout}}</p>
+                </div>
+            </div>
+        </div>
+        <div id="last-comment" class="col-lg-4 col-md-12" style="{% if stats.last_login == None or stats.last_comment == '' %}display: none{% endif %}">
+            <div class="widget widget-stats bg-secondary rounded">
+                <div class="stats-icon"><i class="fa fa-comment"></i></div>
+                <div class="stats-info">
+                    <h4>{% if session['lang'] == "tr" %}Son Yorum
+                        {% else %}Last Comment{% endif %}</h4>
+                    <hr>
+                    <p>{{stats.last_comment}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quick-menu" class="container row" align="center">
+        <div id="temperature-predictions" class="col-lg-4 col-md-12">
+            <div class="card">
+                <img class="card-img-top" src="../static/img/home/temperaturepredictions.png">
+                <div class="card-body">
+                    <h5 class="card-title">{% if session['lang'] == "tr" %}Sıcaklık Tahminleri{% else %}Temperature
+                        Predictions{% endif %}</h5>
+                    <p class="card-text">{% if session['lang'] == "tr" %}Dakikalık olarak ölçülen verilere dayalı
+                        olarak ertesi günün tahminlerini gösterir.
+                        {% else %}It shows the predictions of the next day based on data measured per a minute.{% endif
+                        %}</p>
+                    <a href="/temperaturepredictions" class="btn btn-primary">{% if session['lang'] == "tr" %}Sayfaya
+                        git{% else %}Go to the page{% endif %}</a>
+                </div>
+            </div>
+        </div>
+        <div id="data-analyses" class="col-lg-4 col-md-12">
+            <div class="card">
+                <img class="card-img-top" src="../static/img/home/dataanalyses.jpg">
+                <div class="card-body">
+                    <h5 class="card-title">{% if session['lang'] == "tr" %}Sensör İstatistikleri{% else %}Sensor Statistics{%
+                        endif %}</h5>
+                    <p class="card-text">{% if session['lang'] == "tr" %}Periyodik biçimlerde ortalama, en düşük ve en
+                        yüksek sıcaklık değerlerini gösterir.
+                        {% else %}It shows the average, lowest and highest temperature values in periodic formats.{%
+                        endif %}</p>
+                    <a href="/sensorstatistics" class="btn btn-primary">{% if session['lang'] == "tr" %}Sayfaya git{% else
+                        %}Go to the page{% endif %}</a>
+                </div>
+            </div>
+        </div>
+        <div id="comments" class="col-lg-4 col-md-12">
+            <div class="card">
+                <img class="card-img-top" src="../static/img/home/comments.jpg">
+                <div class="card-body">
+                    <h5 class="card-title">{% if session['lang'] == "tr" %}Yorumlar{% else %}Comments{% endif %}</h5>
+                    <p class="card-text">{% if session['lang'] == "tr" %}Müşteri, Dashboard'daki her bir gelişme için olumlu ve olumsuz olarak kişisel yorumlarını belirtir.
+                        {% else %}Customer specifies personal comments as positive or negative for each event in the Dashboard.{% endif %}</p>
+                    <a href="/comments/1" class="btn btn-primary">{% if session['lang'] == "tr" %}Sayfaya git{% else
+                        %}Go to the page{% endif %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

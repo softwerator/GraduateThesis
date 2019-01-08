@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container-fluid col-md-10 col-xl-12">
+    <h3>
+        {% if session['lang'] == "tr" %}Bize Ulaşın
+        {% else %}Contact Us{% endif %}
+    </h3>
+    <hr>
+    <form class="form-horizontal" method="post">
+        <div class="form-group col-md-12" style="padding-top:9px;padding-bottom:1px">
+            <p>
+                {% if session['lang'] == "tr" %}Şikayet ve önerileriniz için bize yazabilirsiniz.
+                {% else %}You can write to us for complaints and suggestions.{% endif %}
+            </p>
+        </div>
+
+        <div class="form-group col-md-8">
+            <label for="name">
+                {% if session['lang'] == "tr" %}Ad-Soyad
+                {% else %}Full Name{% endif %}
+            </label>
+            {% if session['lang'] == "tr" %}
+            <input type="text" class="form-control" name="name" placeholder="Ad-Soyad" value="{{session.get('full_name')}}">
+            {% else %}
+            <input type="text" class="form-control" name="name" placeholder="Full Name" value="{{session.get('full_name')}}">
+            {% endif %}
+        </div>
+
+        <div class="form-group col-md-8">
+            <label for="name">
+                {% if session['lang'] == "tr" %}E-posta
+                {% else %}E-mail{% endif %}
+            </label>
+            {% if session['lang'] == "tr" %}
+            <input type="email" class="form-control" name="email" placeholder="E-posta" value="{{session.get('email')}}">
+            {% else %}
+            <input type="email" class="form-control" name="email" placeholder="Email" value="{{session.get('email')}}">
+            {% endif %}
+        </div>
+
+        <div class="form-group col-md-8">
+            <label for="subject">
+                {% if session['lang'] == "tr" %}Konu
+                {% else %}Subject{% endif %}
+            </label>
+            {% if session['lang'] == "tr" %}
+            <input type="subject" class="form-control" name="subject" placeholder="Konu">
+            {% else %}
+            <input type="subject" class="form-control" name="subject" placeholder="Subject">
+            {% endif %}
+        </div>
+
+        <div class="form-group col-md-8">
+            <label for="message">
+                {% if session['lang'] == "tr" %}Mesaj
+                {% else %}Message{% endif %}
+            </label>
+            {% if session['lang'] == "tr" %}
+            <textarea class="form-control" name="message" placeholder="Mesajınız"></textarea>
+            {% else %}
+            <textarea class="form-control" name="message" placeholder="Message"></textarea>
+            {% endif %}
+        </div>
+
+        <div class="form-group col-md-8">
+            <button type="submit" class="btn btn-primary">
+                {% if session['lang'] == "tr" %}Mesajınızı gönderin!
+                {% else %}Submit your message!{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

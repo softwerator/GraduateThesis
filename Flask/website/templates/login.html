@@ -1,0 +1,57 @@
+{% extends "otherlayout.html" %}
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="col-md-10 col-lg-9 col-xl-8">
+	<div class="col-md-10 col-lg-11 col-xl-12" style="margin-top: 20px">
+		<div class="alert alert-{{ category }} container" role="alert">
+			{{ message.decode("utf-8") }}
+		</div>
+	</div>
+	<div style="margin-top: 20px" class="col-md-10 col-lg-11 col-xl-12">
+		<img src="../static/img/timutdashboard.PNG" width="300" />
+		<hr>
+		<form method="post">
+			<div class="form-group">
+				<label for="username">Kullanıcı Adı</label>
+				<input type="username" class="form-control" name="username" required>
+			</div>
+			<div class="form-group">
+				<label for="password">Şifre</label>
+				<input type="password" class="form-control" name="password" required>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Giriş Yap</button>
+			</div>
+			<div class="form-group">
+				<a href="/register">Kayıt Ol</a> | <a href="/forgotpassword">Şifremi Unuttum</a>
+			</div>
+		</form>
+	</div>
+</div>
+{% endfor %}
+{% else %}
+<div class="col-md-10 col-lg-9 col-xl-8" style="margin-top: 70px">
+	<form method="post" class="col-md-10 col-lg-11 col-xl-12">
+		<img src="../static/img/timutdashboard.PNG" width="300" />
+		<hr>
+		<div class="form-group">
+			<label for="username">Kullanıcı Adı</label>
+			<input type="username" class="form-control" name="username" required>
+		</div>
+		<div class="form-group">
+			<label for="password">Şifre</label>
+			<input type="password" class="form-control" name="password" required>
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary">Giriş Yap</button>
+		</div>
+		<div class="form-group">
+			<a href="/register">Kayıt Ol</a> | <a href="/forgotpassword">Şifremi Unuttum</a>
+		</div>
+	</form>
+</div>
+{% endif %}
+{% endwith %}
+{% endblock body %}

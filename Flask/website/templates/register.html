@@ -1,0 +1,72 @@
+{% extends "otherlayout.html" %}
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="col-md-10 col-lg-9 col-xl-8">
+	<div class="col-md-10 col-lg-11 col-xl-12" style="margin-top: 20px">
+		<div class="alert alert-{{ category }} container" role="alert">
+			{{ message.decode("utf-8") }}
+		</div>
+	</div>
+	<div style="margin-top:40px" class="col-md-10 col-lg-11 col-xl-12">
+		<h3>Kayıt İşlemi</h3>
+		<hr>
+		<form method="post">
+			<div class="form-group">
+				<label for="fullname">Ad-Soyad</label>
+				<input class="form-control" name="fullname" required>
+			</div>
+			<div class="form-group">
+				<label for="username">Kullanıcı Adı</label>
+				<input class="form-control" name="username" required>
+			</div>
+			<div class="form-group">
+				<label for="email">E-posta Adresi</label>
+				<input type="email" class="form-control" name="email" required>
+			</div>
+			<div class="form-group">
+				<label for="password">Şifre</label>
+				<input type="password" class="form-control" name="password" required>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Kayıt Ol</button>
+			</div>
+			<div class="form-group">
+				<a href="/login">Giriş Yap</a> | <a href="/forgotpassword">Şifremi Unuttum</a>
+			</div>
+		</form>
+	</div>
+	{% endfor %}
+	{% else %}
+	<div class="col-md-10 col-lg-9 col-xl-8" style="margin-top:40px">
+		<form method="post" class="col-md-10 col-lg-11 col-xl-12">
+			<h3>Kayıt İşlemi</h3>
+			<hr>
+			<div class="form-group">
+				<label for="fullname">Ad-Soyad</label>
+				<input class="form-control" name="fullname" required>
+			</div>
+			<div class="form-group">
+				<label for="username">Kullanıcı Adı</label>
+				<input class="form-control" name="username" required>
+			</div>
+			<div class="form-group">
+				<label for="email">E-Posta Adresi</label>
+				<input type="email" class="form-control" name="email" required>
+			</div>
+			<div class="form-group">
+				<label for="password">Şifre</label>
+				<input type="password" class="form-control" name="password" required>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Kayıt Ol</button>
+			</div>
+			<div class="form-group">
+				<a href="/login">Giriş Yap</a> | <a href="/forgotpassword">Şifremi Unuttum</a>
+			</div>
+		</form>
+	</div>
+	{% endif %}
+	{% endwith %}
+	{% endblock body %}

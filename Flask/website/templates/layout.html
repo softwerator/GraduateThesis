@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% if session['lang'] == "tr" or not session.get('lang') %}<html lang="tr">
+{% elif session['lang'] == "en" %}<html lang="en">{% endif %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Timut Dashboard</title>
+    <link rel="icon" href="../static/img/timutdashboardicon.PNG" sizes="16x16">
+    <link rel="stylesheet" href="../static/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/css/flag-icon/css/flag-icon.min.css">
+    <script src="../static/js/jquery/jquery.min.js"></script>
+</head>
+
+<body>
+    {% include "includes/header.html" %}
+    <div class="row" style="margin-top:70px; max-width: 1500px">
+        <div class="d-none d-lg-block col-lg-2">
+            {% include "includes/sidebar.html" %}
+        </div>
+        <div class="col-md-12 col-lg-10">
+            <div class="container">
+                {% include "includes/messages.html" %}
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <script src="../static/js/bootstrap/bootstrap.min.js"></script>
+</body>
+
+</html>

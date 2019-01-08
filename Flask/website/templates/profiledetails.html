@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container-fluid col-md-10 col-xl-12">
+    <h3>
+        {% if session['lang'] == "tr" %}Profil Detayları
+        {% else %}Profile Details{% endif %}
+    </h3>
+    <hr>
+    <div class="container row col-xl-11">
+        <div style="margin-bottom: 20px;" class="col-md-3 col-sm-3 col-xs-3">
+            <img id="profile-image" class="img-thumbnail img-responsive photo rounded-circle" src="{{session.get('image_url')}}" />
+        </div>
+        <div style="margin-bottom: 20px;" class="col-md-9 col-sm-9 col-xs-9">
+            <p>{% if session['lang'] == "tr" %}Ad-Soyad: {% else %}Name: {% endif %} {{ userdetail.fullname }}</p>
+            <p>{% if session['lang'] == "tr" %}Kullanıcı Adı: {% else %}Username: {% endif %} {{ user.username }}</p>
+            <p>{% if session['lang'] == "tr" %}E-posta: {% else %}E-mail: {% endif %} {{ user.email }}</p>
+            <p>{% if userdetail.description != "" %}{% if session['lang'] == "tr" %}Açıklama: {% else %}Description: {%
+                endif %} {{ userdetail.description }}{% endif %}</p>
+            <button class="btn btn-info" data-toggle="modal" data-target="#updateModalCenter"><i class="fa fa-refresh"></i>
+                {% if session['lang'] == "tr" %}Güncelle
+                {% else %}Update{% endif %}</button>
+            {% if userdetail.image != '../static/img/users/default-profile.png' %}
+            <button class="btn btn-warning" data-toggle="modal" data-target="#removeModalCenter"><i class="fa fa-image"></i>
+                {% if session['lang'] == "tr" %}Kaldır
+                {% else %}Remove{% endif %}</button>{% endif %}
+            <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModalCenter"><i class="fa fa-trash"></i>
+                {% if session['lang'] == "tr" %}Sil
+                {% else %}Delete{% endif %}</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="updateModalCenter">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {% if session['lang'] == "tr" %}Profil Güncelle
+                    {% else %}Update Profile{% endif %}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="/updateprofile" enctype=multipart/form-data> <div class="modal-body">
+                <div class="col-md-6 form-group">
+                    {% if session['lang'] == "tr" %}
+                    <input class="form-control" name="newfullname" placeholder="Ad-Soyad" value="{{ userdetail.fullname }}">
+                    {% else %}
+                    <input class="form-control" name="newfullname" placeholder="Name" value="{{ userdetail.fullname }}">
+                    {% endif %}
+                </div>
+                <div class="col-md-12 form-group">
+                    {% if session['lang'] == "tr" %}
+                    <input type="file" class="form-control" name="newimage" placeholder="Resim">
+                    {% else %}
+                    <input type="file" class="form-control" name="newimage" placeholder="Image">
+                    {% endif %}
+                </div>
+                <div class="col-md-12 form-group">
+                    {% if session['lang'] == "tr" %}
+                    <textarea class="form-control" name="newdescription" placeholder="Açıklama">{{ userdetail.description }}</textarea>
+                    {% else %}
+                    <textarea class="form-control" name="newdescription" placeholder="Description">{{ userdetail.description }}</textarea>
+                    {% endif %}
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                {% if session['lang'] == "tr" %}Kapat
+                {% else %}Close{% endif %}
+            </button>
+            <button type="submit" class="btn btn-primary">
+                {% if session['lang'] == "tr" %}Güncelle
+                {% else %}Update{% endif %}
+            </button>
+        </div>
+        </form>
+    </div>
+</div>
+</div>
+<div class="modal fade" id="deleteModalCenter">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {% if session['lang'] == "tr" %}Üyelik Silin
+                    {% else %}Delete Account{% endif %}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {% if session['lang'] == "tr" %}Üyeliği silmek istediğinizden emin misiniz?
+                    {% else %}Are you sure to delete the account?{% endif %}
+                </p>
+            </div>
+            <form method="post" action="/deleteprofile">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        {% if session['lang'] == "tr" %}Kapat
+                        {% else %}Close{% endif %}
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        {% if session['lang'] == "tr" %}Sil
+                        {% else %}Delete{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="removeModalCenter">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {% if session['lang'] == "tr" %}Resim Kaldırın
+                    {% else %}Remove Image{% endif %}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {% if session['lang'] == "tr" %}Resmi kaldırmak istediğinizden emin misiniz?
+                    {% else %}Are you sure to remove the image?{% endif %}
+                </p>
+            </div>
+            <form method="post" action="/removeimage">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        {% if session['lang'] == "tr" %}Kapat
+                        {% else %}Close{% endif %}
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        {% if session['lang'] == "tr" %}Kaldır
+                        {% else %}Remove{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

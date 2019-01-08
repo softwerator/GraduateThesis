@@ -1,0 +1,192 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="col-md-12 col-lg-10 col-xl-12 container">
+	<h3 class="text-left">
+		{% if session['lang'] == "tr" %}Kullanıcı Yorumları
+		{% else %}User Comments{% endif %}
+	</h3>
+	<hr>
+	<style>
+		#leave-comment, #list-comments {
+			padding: 30px 10px 10px 10px;
+		}
+		#comments, #comments li {
+			margin: 0;
+			padding: 0;
+		}
+		#comments li {
+			list-style: none;
+		}
+	</style>
+	<div class="container">
+		<div id="leave-comment" class="well bg-light">
+			<form method="post" action='/addcomment'>
+				<div class="col-xl-6 form-group">
+					{% if session['lang'] == "tr" %}
+					<input class="form-control" name="title" placeholder="Başlık" required>
+					{% else %}
+					<input class="form-control" name="title" placeholder="Title" required>
+					{% endif %}
+				</div>
+				<div class="col-xl-12 form-group">
+					{% if session['lang'] == "tr" %}
+					<textarea class="form-control" style="resize: none" name="comment" placeholder="Yorumunuz" required></textarea>
+					{% else %}
+					<textarea class="form-control" style="resize: none" name="comment" placeholder="Your Comment" required></textarea>
+					{% endif %}
+				</div>
+				<div class="col-xl-12 form-group">
+					<button type="submit" class="btn btn-primary">
+						{% if session['lang'] == "tr" %}Gönder
+						{% else %}Submit{% endif %}
+					</button>
+				</div>
+			</form>
+		</div>
+		<style>
+			.media-comment { 
+				margin-bottom: 20px;
+				max-width: 1000px!important;
+				word-wrap: break-word;
+			}
+			.media-list, .media-list li {
+				margin: 0; padding: 0;
+			}
+			.media-list li {
+				list-style: none;
+			}
+			.pagination-page-info {
+				padding: .6em;
+				padding-left: 0;
+				width: 40em;
+				margin: .5em;
+				margin-left: 0;
+				font-size: 12px;
+			}
+			.pagination-page-info b {
+				color: black;
+				background: #6aa6ed;
+				padding-left: 2px;
+				padding: .1em .25em;
+				font-size: 150%;
+			}
+		</style>
+		<div id="list-comments">
+			{% if status == True %}
+			{% for page in comments.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+			{% if page %}
+			<nav aria-label="Page navigation example" style="display:inline-block">
+				<ul class="pagination">
+					<li class="page-item {% if request.path == url_for('comments', page_num=page) %} active{% endif %}"><a class="page-link"
+						 href="{{ url_for('comments', page_num=page) }}">{{ page }}
+							{% if url_for('comments', page_num=page) %} <span class="sr-only">(current)</span>{% endif %}</a></li>
+				</ul>
+			</nav>
+			{% endif %}
+			{% endfor %}
+			<ul class="media-list" style="margin-top:10px">
+				{% for comment in comments.items %}
+				<li class="media" id="{{comment.id}}">
+					<div class="media-body" style="margin-bottom:30px">
+						<div class="clearfix">
+							<h4 id="title" class="pull-left">{{ comment.title }}</h4>
+							<p id="post-datetime" style="margin-top:10px" class="pull-right">{{ comment.date }}</p>
+						</div>
+						<p class="media-comment">{{ comment.content }}</p>
+						<button class="btn btn-info" data-toggle="modal" data-target="#updateModalCenter-{{ comment.id }}"><i class="fa fa-refresh"></i>
+							{% if session['lang'] == "tr" %}Güncelle
+							{% else %}Update{% endif %}
+						</button>
+						<button class="btn btn-danger" data-toggle="modal" data-target="#deleteModalCenter-{{ comment.id }}"><i class="fa fa-trash"></i>
+							{% if session['lang'] == "tr" %}Sil
+							{% else %}Delete{% endif %}
+						</button>
+					</div>
+					<div class="modal fade" id="updateModalCenter-{{ comment.id }}">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">
+										{% if session['lang'] == "tr" %}Yorumu Güncelle
+										{% else %}Update the Comment{% endif %}
+									</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<form method="post" action="/updatecomment/{{comment.id}}">
+									<div class="modal-body">
+										<div class="col-md-12 form-group">
+											{% if session['lang'] == "tr" %}
+											<input class="form-control" name="newtitle" placeholder="Başlık" value="{{ comment.title }}" required>
+											{% else %}
+											<input class="form-control" name="newtitle" placeholder="Title" value="{{ comment.title }}" required>
+											{% endif %}
+										</div>
+										<div class="col-md-12 form-group">
+											{% if session['lang'] == "tr" %}
+											<textarea class="form-control" name="newcomment" placeholder="Yorumunuz" required>{{ comment.content }}</textarea>
+											{% else %}
+											<textarea class="form-control" name="newcomment" placeholder="Your Comment" required>{{ comment.content }}</textarea>
+											{% endif %}
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">
+											{% if session['lang'] == "tr" %}Kapat
+											{% else %}Close{% endif %}
+										</button>
+										<button type="submit" class="btn btn-primary">
+											{% if session['lang'] == "tr" %}Güncelle
+											{% else %}Update{% endif %}
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+	
+					<div class="modal fade" id="deleteModalCenter-{{ comment.id }}">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">
+										{% if session['lang'] == "tr" %}Yorumu Silin
+										{% else %}Delete The Comment{% endif %}
+									</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<p>
+										{% if session['lang'] == "tr" %}Yorumu silmek istediğinizden emin misiniz?
+										{% else %}Are you sure to delete the comment?{% endif %}
+									</p>
+								</div>
+								<form method="post" action="/deletecomment/{{comment.id}}">
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">
+											{% if session['lang'] == "tr" %}Kapat
+											{% else %}Close{% endif %}
+										</button>
+										<button type="submit" class="btn btn-danger">
+											{% if session['lang'] == "tr" %}Sil
+											{% else %}Delete{% endif %}
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</li>
+				{% endfor %}
+			</ul>
+			{% else %}
+			<p>{{ comments.decode('utf8') }}</p>
+			{% endif %}
+		</div>
+	</div>
+	
+</div>
+{% endblock %}

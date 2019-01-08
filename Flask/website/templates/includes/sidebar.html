@@ -1,0 +1,33 @@
+<div class="sidebar" style="position: fixed; width: 226px">
+	<div class="card" style="border: none; margin-bottom: 20px">
+		<div align="center">
+			<p class="card-text">
+				{% if session['lang'] == "tr" %}Hoş Geldiniz!
+				{% else %}Welcome!{% endif %}
+			</p>
+			<p class="card-text">{{ session.get('full_name') }}</p>
+			<img class="card-img-top rounded-circle" src="{{session.get('image_url')}}" style="width: 100px; height: 100px; align-items: center">
+		</div>
+	</div>
+	<div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+		<a class="nav-link {% if request.path == '/profiledetails' %} active {% endif %}" href="/profiledetails" role="tab">
+			<i style="margin-top:5px" class="fa fa-user pull-right"></i>{% if session['lang'] == "tr" %}Profil Detayları{% else
+			%}Profile Details{% endif %}</a>
+		<a class="nav-link {% if request.path == '/aboutus' %} active {% endif %}" href="/aboutus" role="tab">
+			<i style="margin-top:5px" class="fa fa-info-circle pull-right"></i>{% if session['lang'] == "tr" %}Hakkımızda{% else
+			%}About Us{% endif %}</a>
+		<a class="nav-link {% if request.path == '/temperaturepredictions' %} active {% endif %}" href="/temperaturepredictions"
+		 role="tab">
+			<i style="margin-top:5px" class="fa fa-calculator pull-right"></i>{% if session['lang'] == "tr" %}Sıcaklık
+			Tahminleri{% else %}Temperature Predictions{% endif %}</a>
+		<a class="nav-link {% if request.path == '/sensorstatistics' %} active {% endif %}" href="/sensorstatistics" role="tab">
+			<i style="margin-top:5px" class="fa fa-line-chart pull-right"></i>{% if session['lang'] == "tr" %}Sensör İstatistikleri{%
+			else %}Sensor Statistics{% endif %}</a>
+		<a class="nav-link {% if request.path[0:10] == '/comments/' %} active {% endif %}" href="/comments/1" role="tab">
+			<i style="margin-top:5px" class="fa fa-comments pull-right"></i>{% if session['lang'] == "tr" %}Kullanıcı
+			Yorumları{% else %}User Comments{% endif %}</a>
+		<a class="nav-link {% if request.path == '/contactus' %} active {% endif %}" href="/contactus" role="tab">
+			<i style="margin-top:5px" class="fa fa-compress pull-right"></i>{% if session['lang'] == "tr" %}Bize Ulaşın{% else
+			%}Contact Us{% endif %}</a>
+	</div>
+</div>

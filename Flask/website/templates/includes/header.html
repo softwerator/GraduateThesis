@@ -1,0 +1,40 @@
+<div class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+	<a class="navbar-brand" href="/" style="margin-left:26px"><img src="../static/img/timutdashboard-dark.PNG" width="150" /></a>
+	<div class="collapse navbar-collapse" id="navbarCollapse">
+		<ul class="navbar-nav ml-auto">
+			<div id="languageswitch" class="dropdown">
+				<button style="background-color:white;width:160px" class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+					{% if session['lang'] == "tr" %}Dil Seçiniz{% else %}Select Language{% endif %}
+					<span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li id="tr" style="margin-left:7px"><a href="" style="text-decorator:none;color:rgb(33,37,41)"><span class="flag-icon flag-icon-tr"
+							 style="padding-left:22px">{% if session['lang'] == "tr" %}Türkçe{% else %}Turkish{% endif %}</span></a></li>
+					<li id="en" style="margin-left:7px"><a href="" style="text-decorator:none;color:rgb(33,37,41)"><span class="flag-icon flag-icon-gb"
+							 style="padding-left:22px">{% if session['lang'] == "tr" %}İngilizce{% else %}English{% endif %}</span></a></li>
+				</ul>
+			</div>
+			<script>
+				$(function () {
+					$("#languageswitch").on('click', 'a', function () {
+						$.post('/language/' + $(this).parent().attr('id'), function () {
+							window.location.reload();
+						});
+					});
+				});
+			</script>
+			<li class="nav-item active">
+				<a id="logout" class="nav-link" href="" onclick="logout()">
+					{% if session['lang'] == "tr" %}Çıkış Yap
+					{% else %}Logout{% endif %}
+				</a>
+			</li>
+			<script>
+				function logout() {
+					$.post('/logout', function () {
+						window.location.href = '/login';
+					});
+				}
+			</script>
+		</ul>
+	</div>
+</div>

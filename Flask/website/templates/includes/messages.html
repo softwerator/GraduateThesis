@@ -1,0 +1,11 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="col-md-10 col-xl-12">
+    <div class="alert alert-{{ category }} container" role="alert">
+        {{ message.decode("utf-8") }}
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}

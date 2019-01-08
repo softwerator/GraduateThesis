@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% if session['lang'] == "tr" or not session.get('lang') %}<html lang="tr">
+{% elif session['lang'] == "en" %}<html lang="en">{% endif %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Timut Dashboard</title>
+    <link rel="icon" href="../static/img/timutdashboardicon.PNG" sizes="16x16">
+    <link rel="stylesheet" href="../static/css/bootstrap/bootstrap.min.css">
+    <style>
+        @media (min-width: 768px) {
+            .h-md-100 {
+                height: 100vh;
+            }
+        }
+
+        .btn-round {
+            border-radius: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-md-flex h-md-100 align-items-center">
+        <div class="d-none d-md-block col-md-6 p-0 bg-indigo h-md-100">
+            <div class="text-white d-md-flex align-items-center h-100 p-6 text-center justify-content-center">
+                <img src="../static/img/login.jpeg" style="width:200vh; height:100vh" />
+            </div>
+        </div>
+        <div class="col-md-6 p-0 bg-white h-md-100 loginarea">
+            <div class="d-md-flex align-items-center h-md-100 p-6 justify-content-center">
+                <div class="container">
+                    {% block body %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

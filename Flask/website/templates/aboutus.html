@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="container-fluid col-md-10 col-xl-12">
+    <h3>{% if session['lang'] == "tr" %}Hakkımızda
+        {% else %}About Us{% endif %}</h3>
+    <hr><br>
+    <style>
+        p {
+            word-wrap: break-word;
+        }
+    </style>
+    <div class="container">
+        <div class="container row">
+            <div class="col-sm-12 col-md-7 col-lg-8">
+                {% if session['lang'] == "tr" %}
+                <h5>Neyi hedefliyoruz?</h5><br>
+                <p>Günümüz dünyasında enerji denildiğinde, kullanılan enerjiden nasıl daha fazla tasarruf
+                    edilebileceği akıllara geliyor. Küresel bir dünyada yaşadığımız için tüketimin üretimden daha
+                    fazla olduğu bir dönemden geçiliyor. Bu durum kaynakları haddinden fazla kullanmaya
+                    sebebiyet veriyor. Ayrıca tükettiğimiz şeyler maliyet açısından büyük riskler yaratıyor ve
+                    birçok kurum fazlaca tükettiği şeylerin karşılığını veremediğinden ekonomik krizle karşı
+                    karşıya kalıyor ve iflas ediyor. En fazla tüketim yapılan alanlardan birisi de hiç kuşkusuz
+                    enerji alanıdır ve buradan yapılacak tasarruflarla hem maliyet hem de çevre sağlığı açısından
+                    kazanç sağlamak mümkündür. Enerjinin kullanımına bağlı etmenlerden birisi sıcaklıktır.
+                    Sıcaklıklarda yaşanan ufak değişiklikler bile enerji kullanımını ne kadar etkilediğini söylemek
+                    mümkündür. Bundan dolayı gelecekte yaşanabilecek sıcaklık oran ve değişimlerini hesap
+                    etmek önemli olacaktır.</p>
+                {% else %}
+                <h5>What are we aiming at?</h5><br>
+                <p>In today's world, energy comes to mind how to save more on the energy used.
+                    As we live in a global world, we are going through a period in which
+                    consumption is more than production. This situation causes excessive use of resources.
+                    In addition, the things we consume cost big in terms of cost and many
+                    institutions are unable to respond to the excessive consumption of the economic crisis
+                    is facing and bankrupt. One of the most consumed areas is undoubtedly
+                    the field of energy, and it is possible to make savings in terms of both cost
+                    and environmental health with the savings made therefrom. One of the factors
+                    related to the use of energy is temperature. It is possible to say that even
+                    the slight changes in temperatures affect the energy use. Therefore, it will be
+                    important to calculate the future temperature ratios and variations.</p>
+                {% endif %}
+            </div>
+            <div class="d-none d-md-block col-md-5 col-lg-4" align="right">
+                <img class="img-responsive" src="../static/img/aboutus/what-are-we-aiming.png" />
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="container row">
+            <div class="d-none d-md-block col-md-5 col-lg-4">
+                <img class="img-responsive" src="../static/img/aboutus/why-timut-dashboard.png" width="200px" />
+            </div>
+            <div class="col-sm-12 col-md-7 col-lg-8 text-right">
+                {% if session['lang'] == "tr" %}
+                <h5>Neden Timut Dashboard?</h5><br>
+                <p>Geliştirilen Timut sensörü aracılığıyla anlık ölçülmüş sıcaklık verilerinden yola çıkarak ertesi
+                    günün
+                    sıcaklık tahminleri yapılabilecek ve enerji tasarrufu açısından önemli bir rehber olacaktır.
+                    Ayrıca bu tahminleme işlemleri için kullanılacak sıcaklık verileri, gerçek zaman uygulaması
+                    şeklinde sisteme aktarılacaktır. Yapılan tahminlerin gösterimi ise bir web platformu üzerinde
+                    olacaktır. Bu web platformu içinde kullanılacak grafikler ile son üç saate ait tahminler
+                    gösterilebilecektir.</p>
+                {% else %}
+                <h5>Why is Timut Dashboard?</h5><br>
+                <p>Based on the Timut sensor developed, it will be possible to make the temperature estimates
+                    of the next day and be an important guide for energy saving. In addition, the temperature data
+                    to be used for these estimations will be transferred to the system in the form of real time
+                    application. The representation of the estimates will be on a web platform. The graphs to be used
+                    within this web platform will be able to show estimates for the last three hours.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container text-center">
+        <h3>{% if session['lang'] == "tr" %}Hizmetlerimiz
+            {% else %}Our Services{% endif %}</h3><br>
+        <div class="container row">
+            <div class="col-sm-12 col-md-4">
+                <img src="../static/img/aboutus/big-data.png" width="150px" /><br><br>
+                {% if session['lang'] == "tr" %}
+                <h5>Büyük Veri</h5><br>
+                <p>Gerçek zamanlı verilerin hızlı ve başarılı bir şekilde toplanması ve saklanmasında kullanılmaktadır.</p>
+                {% else %}
+                <h5>Big Data</h5><br>
+                <p>It is used to collect and store real-time data quickly and successfully.</p>
+                {% endif %}
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <img src="../static/img/aboutus/machine-learning.png" width="150px" /><br><br>
+                {% if session['lang'] == "tr" %}
+                <h5>Makine Öğrenmesi</h5><br>
+                <p>Eldeki büyük verinin analiz edilip zaman ertesi günlerin sıcaklık tahminini sağlamada
+                    kullanılmaktadır.</p>
+                {% else %}
+                <h5>Machine Learning</h5><br>
+                <p>It is used to analyze the big data in hand and to provide the temperature estimation of the next
+                    days..</p>
+                {% endif %}
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <img src="../static/img/aboutus/advanced-chart-systems.png" width="150px" /><br><br>
+                {% if session['lang'] == "tr" %}
+                <h5>İleri Grafik Sistemleri</h5><br>
+                <p>Tahmin edilen sonuçların karşılaştırmalı bir şekilde ve periyodik biçimlerde gösterimi için
+                    kullanılmaktadır.</p>
+                {% else %}
+                <h5>Advanced Chart Systems</h5><br>
+                <p>It is used for comparative and periodic representation of predicted results.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

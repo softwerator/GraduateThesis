@@ -1,0 +1,363 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="container-fluid col-md-10 col-xl-12">
+    <h3>
+        {% if session['lang'] == "tr" %}Sıcaklık Tahminleri
+        {% else %}Temperature Predictions{% endif %}
+    </h3>
+    <hr>
+    <style>
+        #chartdiv {
+            width: 100%;
+            height: 500px;
+            margin: auto;
+        }
+
+        #gaugediv1,
+        #gaugediv2,
+        #gaugediv3 {
+            width: 100%;
+            height: 120px;
+            margin: auto;
+        }
+    </style>
+    
+    <div class="container row" style="padding-top:10px">
+        <div class="col-lg-12">
+            {% if session['lang'] == "tr" %}
+            Tarih-Saat: <input id="predict-txt" class="form-group" style="width:200px" placeholder="YYYY-AA-GG SS:DD"></input>
+            <button id="predict-button" class="btn btn-primary"><i class="fa fa-search"></i> Ara</button>
+            {% else %}
+            Date-Time: <input id="predict-txt" class="form-group" style="width:200px" placeholder="YYYY-MM-DD HH:MM"></input>
+            <button id="predict-button" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+            {% endif %}
+            <script>
+                $(function() {
+                    $("#predict-button").click(function() {
+                        $.get('/api/v1/get_prediction_by_dt/' + $("#predict-txt").val(), function (response) {
+                            if (response.data == "Unexcepted error") {
+                                $("#predict-result-by-dt").html(
+                                    {% if session['lang'] == "tr" %}
+                                    "Bilinmeyen bir nedenden dolayı arama başarısız oldu"
+                                    {% else %}
+                                    "The search failed for an unexcepted reason"
+                                    {% endif %}
+                                );
+                            } else if (response.data == "Invalid input") {
+                                $("#predict-result-by-dt").html(
+                                    {% if session['lang'] == "tr" %}
+                                    "Girdiğiniz değer bir tarih-saat değildir"
+                                    {% else %}
+                                    "The value you entered is not a date-time"
+                                    {% endif %}
+                                );
+                            } else if (response.data == "Invalid format") {
+                                $("#predict-result-by-dt").html(
+                                    {% if session['lang'] == "tr" %}
+                                    "Geçersiz bir tarih-saat girdiniz"
+                                    {% else %}
+                                    "You have entered an invalid date-time"
+                                    {% endif %}
+                                );
+                            } else if (response.data == "Invalid date-time") {
+                                $("#predict-result-by-dt").html(
+                                    {% if session['lang'] == "tr" %}
+                                    "Girdiğiniz tarih-saat için arama hakkınız yoktur"
+                                    {% else %}
+                                    "You have no right to search for the date-time you entered"
+                                    {% endif %}
+                                );
+                            } else if (response.data == "Unfound date-time") {
+                                $("#predict-result-by-dt").html(
+                                    {% if session['lang'] == "tr" %}
+                                    "Girdiğiniz tarih-saat için ölçülmüş bir değer yoktur"
+                                    {% else %}
+                                    "There is no measured value to search for the date-time you entered"
+                                    {% endif %}
+                                );
+                            } else {
+                                $("#predict-result-by-dt").html(
+                                {% if session['lang'] == "tr" %}
+                                    "Arattığınız tarihte ölçülen değer " 
+                                    + response.data["current_val"].toFixed(3) + " &#8451<br>"
+                                    + response.data["predicted_dt"] + " zamanında beklenen değer " 
+                                    + response.data["predicted_val"].toFixed(3) + " &#8451"
+                                {% else %}
+                                    "The measured value at the time of your search is " 
+                                    + response.data["current_val"].toFixed(3) + " &#8451<br>"
+                                    + "The expected value at " + response.data["predicted_dt"] + " is " 
+                                    + response.data["predicted_val"].toFixed(3) + " &#8451"
+                                {% endif %}
+                                );
+                            }
+                        });
+                    });
+                })
+            </script>
+        </div>
+        <div class="col-lg-12">
+            {% if session['lang'] == "tr" %}
+            <p id="predict-result-by-dt" style="padding-top:10px">
+            Yalnızca 24 saat içindeki bir zamanı aratabilirsiniz.</p>
+            {% else %}
+            <p id="predict-result-by-dt" style="padding-top:10px">
+            You can only search for a time within 24 hours.</p>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    <div class="container row">
+        <div class="col-lg-12">
+            <span id="countdown" style="text-align: right"></span>
+        </div>
+    </div>
+    <div class="container row" style="margin-top:36px;margin-bottom:36px">
+        <div class="col-sm-4" id="gaugediv1"></div>
+        <div class="col-sm-4" id="gaugediv2"></div>
+        <div class="col-sm-4" id="gaugediv3"></div>
+    </div>
+    <div id="chartdiv" class="container" style="margin-top:36px;margin-bottom:36px"></div>
+</div>
+<script src="../static/js/amcharts/amcharts.js"></script>
+<script src="../static/js/amcharts/serial.js"></script>
+<script src="../static/js/amcharts/gauge.js"></script>
+<script src="../static/js/amcharts/themes/light.js"></script>
+<script>
+    $(function () {    
+        countdown = 60;
+        handled = false;
+        function generateGaugeDatas() {
+            $.get('/api/v1/get_comparisons', function (response) {
+                var gaugeChart1 = AmCharts.makeChart("gaugediv1", {
+                    "type": "gauge",
+                    "theme": "none",
+                    "fontFamily": "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                    "axes": [{
+                        "axisAlpha": 0,
+                        "tickAlpha": 0,
+                        "labelsEnabled": false,
+                        "startValue": 0,
+                        "endValue": 100,
+                        "startAngle": 0,
+                        "endAngle": 360,
+                        "bands": [{
+                            "color": "#dc3545",
+                            "startValue": 0,
+                            "endValue": 100,
+                            "radius": "50%",
+                            "innerRadius": "100%",
+                            {% if session['lang'] == "tr" %}
+                            "balloonText": "Günlük olarak ölçülen " +
+                            response.data[0]["count"] +
+                            " verinin ortalama başarım oranı: %" +
+                            response.data[0]["mean_per"].toFixed(3)
+                            {% else %}
+                            "balloonText": "The daily average accuracy of " +
+                            response.data[0]["count"] + " values is " +
+                            response.data[0]["mean_per"].toFixed(3) + "%"
+                            {% endif %}
+                        }, {
+                        "color": "#eee",
+                        "startValue": 0,
+                        "endValue": 100 - response.data[0]["mean_per"].toFixed(3),
+                        "radius": "50%",
+                        "innerRadius": "100%"
+                        }]
+                    }]
+                });
+                var gaugeChart2 = AmCharts.makeChart("gaugediv2", {
+                    "type": "gauge",
+                    "theme": "none",
+                    "fontFamily": "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                    "axes": [{
+                        "axisAlpha": 0,
+                        "tickAlpha": 0,
+                        "labelsEnabled": false,
+                        "startValue": 0,
+                        "endValue": 100,
+                        "startAngle": 0,
+                        "endAngle": 360,
+                        "bands": [{
+                            "color": "#28a745",
+                            "startValue": 0,
+                            "endValue": 100,
+                            "radius": "50%",
+                            "innerRadius": "100%",
+                            {% if session['lang'] == "tr" %}
+                            "balloonText": "Haftalık olarak ölçülen " +
+                            response.data[1]["count"] +
+                            " verinin ortalama başarım oranı: %" +
+                            response.data[1]["mean_per"].toFixed(3)
+                            {% else %}
+                            "balloonText": "The weekly average accuracy of " +
+                            response.data[1]["count"] + " values is " +
+                            response.data[1]["mean_per"].toFixed(3) + "%"
+                            {% endif %}
+                        }, {
+                            "color": "#eee",
+                            "startValue": 0,
+                            "endValue": 100 - response.data[1]["mean_per"].toFixed(3),
+                            "radius": "50%",
+                            "innerRadius": "100%"
+                        }]
+                    }]
+                });
+                var gaugeChart3 = AmCharts.makeChart("gaugediv3", {
+                    "type": "gauge",
+                    "theme": "none",
+                    "fontFamily": "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                    "axes": [{
+                        "axisAlpha": 0,
+                        "tickAlpha": 0,
+                        "labelsEnabled": false,
+                        "startValue": 0,
+                        "endValue": 100,
+                        "startAngle": 0,
+                        "endAngle": 360,
+                        "bands": [{
+                            "color": "#67b7dc",
+                            "startValue": 0,
+                            "endValue": 100,
+                            "radius": "50%",
+                            "innerRadius": "100%",
+                            {% if session['lang'] == "tr" %}
+                            "balloonText": "Aylık olarak ölçülen " +
+                            response.data[2]["count"] +
+                            " verinin ortalama başarım oranı: %" +
+                            response.data[2]["mean_per"].toFixed(3)
+                            {% else %}
+                            "balloonText": "The monthly average accuracy of " +
+                            response.data[2]["count"] + " values is " +
+                            response.data[2]["mean_per"].toFixed(3) + "%"
+                            {% endif %}
+                        }, {
+                        "color": "#eee",
+                        "startValue": 0,
+                        "endValue": 100 - response.data[2]["mean_per"].toFixed(3),
+                        "radius": "50%",
+                        "innerRadius": "100%"
+                        }]
+                    }]
+                });
+                $('a[title="JavaScript charts"]').remove()
+            })
+        }
+        function generateChartData() {
+            $.get('/api/v1/get_predictions', function (response) {
+                var chartData = [];
+                for (minute = 0; minute < response.data.length; minute++) {
+                    chartData.push({
+                        "curr_dt": response.data[minute]["current_dt"],
+                        "time": response.data[minute]["current_dt"].substring(11),
+                        "curr_val": response.data[minute]["current_val"].toFixed(3),
+                        "pred_dt": response.data[minute]["predicted_dt"],
+                        "pred_val": response.data[minute]["predicted_val"].toFixed(3),
+                    });
+                }
+                console.log(chartData)
+                var chart = AmCharts.makeChart("chartdiv", {
+                    "type": "serial",
+                    "zoomOutText": {% if session['lang'] == "tr" %}"Hepsini Göster"{% else %}"Show All"{% endif %},
+                    "theme": "light",
+                    "marginTop": 7,
+                    "dataProvider": chartData,
+                    "valueAxes": [{
+                        "axisAlpha": 0.2,
+                        "dashLength": 1,
+                        "position": "left"
+                    }],
+                    "mouseWheelZoomEnabled": true,
+                    "fontFamily": "'Helvetica Neue', Helvetica, Arial, sans-serif",
+                        "graphs": [{
+                        "id": "g1",
+                        {% if session['lang'] == "tr" %}
+                        "balloonText": "<b>Anlık Zaman:</b> [[curr_dt]]<br><b>Değer:</b> [[value]] &#8451"
+                        {% else %} "balloonText": "<b>Current Time:</b> [[curr_dt]]<br><b>Value:</b> [[value]] &#8451"
+                        {% endif %},
+                        "bullet": "round",
+                        "bulletBorderAlpha": 1,
+                        "bulletColor": "#FFFFFF",
+                        "hideBulletsCount": 50,
+                        "title": "red line",
+                        "valueField": "curr_val",
+                        "useLineColorForBulletBorder": true,
+                    }, {
+                        "id": "g2",
+                        {% if session['lang'] == "tr" %}
+                        "balloonText": "<b>Ertesi Gün:</b> [[pred_dt]]<br><b>Değer:</b> [[value]] &#8451"
+                        {% else %} "balloonText": "<b>Next Day:</b> [[pred_dt]]<br><b>Value:</b> [[value]] &#8451"
+                        {% endif %},
+                        "bullet": "round",
+                        "bulletBorderAlpha": 1,
+                        "bulletColor": "#FFFFFF",
+                        "hideBulletsCount": 50,
+                        "title": "blue line",
+                        "valueField": "pred_val",
+                        "useLineColorForBulletBorder": true,
+                    }],
+                    "chartScrollbar": {
+                        "autoGridCount": true,
+                        "graph": "g2",
+                        "scrollbarHeight": 40
+                    },
+                    "chartCursor": {
+                        "limitToGraph": "g1"
+                    },
+                    "categoryField": "time",
+                    "categoryAxis": {
+                        "axisColor": "#DADADA",
+                        "dashLength": 1,
+                        "minorGridEnabled": true
+                    },
+                    "listeners": [{
+                        "event": "rendered",
+                        "method": function (e) {
+                            // set up generic mouse events
+                            var sb = e.chart.chartScrollbar.set.node;
+                            sb.addEventListener("mousedown", function () {
+                                e.chart.mouseIsDown = true;
+                            });
+                            e.chart.chartDiv.addEventListener("mouseup", function () {
+                                e.chart.mouseIsDown = false;
+                                // zoomed finished
+                                console.log("zoom finished", e.chart.lastZoomed);
+                            });
+                        }
+                        }, {
+                            "event": "zoomed",
+                            "method": function (e) {
+                                e.chart.lastZoomed = e;
+                                console.log("ignoring zoomed");
+                        }
+                    }]
+                });
+                requestCountdown();
+                if (handled == false) { document.getElementById("countdown").style.paddingTop = "10px"; handled = true; }
+                $('a[title="JavaScript charts"]').remove()
+            })
+        }
+        function requestCountdown() {
+            if (countdown == 0) countdown = 60;
+            countdown--;
+            if (countdown == 0) document.getElementById("countdown").style.display = "none";
+            else document.getElementById("countdown").style.display = "block";
+            if (document.documentElement.lang == "tr") $("#countdown").html('Veriler ' + countdown + ' saniye sonra güncellenecektir.');
+            else {
+                if (countdown == 1) $("#countdown").html('Datas will be updated ' + countdown + ' second later.');
+                else $("#countdown").html('Datas will be updated ' + countdown + ' seconds later.');
+            }
+        }
+        generateChartData();
+        generateGaugeDatas();
+        setInterval(function () {
+            generateChartData();
+            generateGaugeDatas();
+        }, 60000);
+        setInterval(function () {
+            if (countdown != 0 && countdown != 60) requestCountdown();
+        }, 1000);
+    })	
+</script>
+{% endblock %}
